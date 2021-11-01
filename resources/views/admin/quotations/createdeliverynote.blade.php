@@ -93,6 +93,18 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label for="iva_retencion" class="col-md-2 col-form-label text-md-right">IVA Percibido:</label>
+
+                            <div class="col-md-4">
+                                <input id="iva_retencion" type="text" class="form-control @error('iva_retencion') is-invalid @enderror" name="iva_retencion" value="{{ number_format(($total_iva_pcb ?? 0) / ($bcv ?? 1), 2, ',', '.') }}" readonly required autocomplete="iva_retencion">
+                                @error('iva_retencion')
+                                <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label for="sub_totals" class="col-md-2 col-form-label text-md-right">Sub Total</label>
                             <div class="col-md-4">
                                 <input id="sub_total" type="text" class="form-control @error('sub_total') is-invalid @enderror" name="sub_total" value="{{ number_format($quotation->iva_amount, 2, ',', '.') ?? old('sub_total') }}" readonly required autocomplete="sub_total">
@@ -195,6 +207,7 @@
 
                 let totalIvaMenos = (inputIva * "<?php echo $quotation->base_imponible  / ($bcv ?? 1); ?>") / 100;
 
+                let iva_percibido = "<?php echo $total_iva_pcb / ($bcv ?? 1) ; ?>";
 
 
                 /*-----------------------------------*/
@@ -222,7 +235,7 @@
 
 
                 // var grand_total = parseFloat(totalFactura) + parseFloat(totalIva);
-                var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento);
+                var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento) + parseFloat(iva_percibido) ;
 
                 var grand_totalformat = grand_total.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
 
@@ -267,7 +280,7 @@
         let totalBaseImponible = "<?php echo $quotation->base_imponible  / ($bcv ?? 1)?>";
 
         let totalIvaMenos = (inputIva * "<?php echo $quotation->base_imponible  / ($bcv ?? 1); ?>") / 100;
-
+        let iva_percibido = "<?php echo $total_iva_pcb / ($bcv ?? 1) ; ?>";
 
         /*-----------------------------------*/
         /*Toma la Base y la envia por form*/
@@ -296,7 +309,7 @@
 
 
         // var grand_total = parseFloat(totalFactura) + parseFloat(totalIva);
-        var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento);
+        var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento) +  parseFloat(iva_percibido) ;
 
         var grand_totalformat = grand_total.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
 

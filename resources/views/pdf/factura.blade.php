@@ -145,7 +145,7 @@
                     <td style="font-size: 10px;text-align: right;border: 1px solid black;">0</td>
                 @endif
                 @if($inventories_quotation->retiene_iva_quotation == "0") <!-- IVA-->
-                <td style="font-size: 10px;text-align: right;border: 1px solid black;">{{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation * 12 / 100,2,",",".")}}</td>
+                <td style="font-size: 10px;text-align: right;border: 1px solid black;">{{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation * 16 / 100,2,",",".")}}</td>
                 @else
                     <td style="font-size: 10px;text-align: right;border: 1px solid black;">0</td>
                 @endif
@@ -155,19 +155,19 @@
                     <td style="font-size: 10px;text-align: right;border: 1px solid black;">0</td>
                 @endif
                 @if($inventories_quotation->retiene_iva_quotation == "0") <!-- .IVA PERCIBIDO-->
-                <td style="font-size: 10px;text-align: right;border: 1px solid black;">{{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation * 15 / 100 * 12 / 100,2,",",".")}}</td>
+                <td style="font-size: 10px;text-align: right;border: 1px solid black;">{{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation * 15 / 100 * 16 / 100,2,",",".")}}</td>
                 @else
                     <td style="font-size: 10px;text-align: right;border: 1px solid black;">0</td>
                 @endif
                 @if($inventories_quotation->retiene_iva_quotation == "0")  <!-- TOTAL DE VENTA -->
-                <td style="font-size: 10px;text-align: center;border: 1px solid black;">{{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation + $inventories_quotation->price * $inventories_quotation->amount_quotation * $quotation->iva_percentage / 100 + $inventories_quotation->price * $inventories_quotation->amount_quotation * $quotation->base_imponible_pcb / 100 * $quotation->iva_percibido / 100 ,2,",",".")}}</td>
+                <td style="font-size: 10px;text-align: center;border: 1px solid black;">{{number_format(($inventories_quotation->price * $inventories_quotation->amount_quotation) + ($inventories_quotation->price * $inventories_quotation->amount_quotation * 16 / 100)  + ($inventories_quotation->price * $inventories_quotation->amount_quotation * 15 / 100 * 16 / 100)  ,2,",",".")}}</td>
                 @else
                     <td style="font-size: 10px;text-align: center;border: 1px solid black;">{{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation ,2,",",".")}}</td>
                 @endif
                 @if($inventories_quotation->retiene_iva_quotation == "0") <!-- TOTAL DE VENTA DOLARES -->
-                <td style="font-size: 10px;text-align: center;border: 1px solid black;">${{number_format(($inventories_quotation->price * $inventories_quotation->amount_quotation + $inventories_quotation->price * $inventories_quotation->amount_quotation * $quotation->iva_percentage / 100 + $inventories_quotation->price * $inventories_quotation->amount_quotation * $quotation->base_imponible_pcb / 100 * $quotation->iva_percibido / 100) / $inventories_quotation->rate ,2,",",".")}}</td>
+                <td style="font-size: 10px;text-align: center;border: 1px solid black;">{{number_format((($inventories_quotation->price * $inventories_quotation->amount_quotation) + ($inventories_quotation->price * $inventories_quotation->amount_quotation * 16 / 100)  + ($inventories_quotation->price * $inventories_quotation->amount_quotation * 15 / 100 * 16 / 100) ) / $rate ,2,",",".")}}</td>
                 @else
-                    <td style="font-size: 10px;text-align: center;border: 1px solid black;">${{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation / $inventories_quotation->rate )}}</td>
+                    <td style="font-size: 10px;text-align: center;border: 1px solid black;">${{number_format($inventories_quotation->price * $inventories_quotation->amount_quotation / $rate )}}</td>
                 @endif
 
             </tr>

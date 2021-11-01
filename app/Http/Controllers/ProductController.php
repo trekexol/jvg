@@ -8,7 +8,7 @@ use App\ProductPrice;
 use App\Segment;
 use App\Subsegment;
 use App\ThreeSubsegment;
-use App\TwoSubSegment;
+use App\TwoSubsegment;
 use App\UnitOfMeasure;
 use App\User;
 use Illuminate\Database\Eloquent\Model;

@@ -235,57 +235,31 @@
 
             function calculate() {
                 let inputIva = document.getElementById("iva").value;
-
                 //let totalIva = (inputIva * "<?php echo $quotation->total_factura; ?>") / 100;
-
                 let totalFactura = "<?php echo $quotation->total_factura / ($bcv ?? 1) ?>";
-
                 //AQUI VAMOS A SACAR EL MONTO DEL IVA DE LOS QUE ESTAN EXENTOS, PARA LUEGO RESTARSELO AL IVA TOTAL
                 let totalBaseImponible = "<?php echo $quotation->base_imponible / ($bcv ?? 1) ?>";
-
                 let totalIvaMenos = (inputIva * "<?php echo $quotation->base_imponible / ($bcv ?? 1); ?>") / 100;
-
-
-
-
                 var total_iva_exento =  parseFloat(totalIvaMenos);
-
                 var iva_format = total_iva_exento.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
-
                 //document.getElementById("retencion").value = parseFloat(totalIvaMenos);
                 //------------------------------
-
-
-
                 document.getElementById("iva_amounts").value = iva_format;
-
-
                 // var grand_total = parseFloat(totalFactura) + parseFloat(totalIva);
                 var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento);
-
                 var grand_totalformat = grand_total.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
-
 
                 document.getElementById("grand_total").value = grand_totalformat;
 
                 let inputAnticipo = document.getElementById("anticipo").value;
-
                 var montoFormat = inputAnticipo.replace(/[$.]/g,'');
-
                 var montoFormat_anticipo = montoFormat.replace(/[,]/g,'.');
-
                 var total_pay = parseFloat(totalFactura) + total_iva_exento - montoFormat_anticipo;
-
-
-
                 var total_payformat = total_pay.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
 
                 document.getElementById("total_pay").value =  total_payformat;
-
                 document.getElementById("total_pay_form").value =  total_pay.toFixed(2);
-
                 document.getElementById("iva_form").value =  inputIva;
-
                 document.getElementById("anticipo_form").value =  inputAnticipo;
             }
 
