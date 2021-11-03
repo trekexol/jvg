@@ -28,12 +28,9 @@ class QuotationController extends Controller
        $this->middleware('auth');
    }
 
-
-
    public function index()
    {
        $user       =   auth()->user();
-
        try{
            $users_role =   $user->role_id;
            if($users_role == '1'){
@@ -44,13 +41,11 @@ class QuotationController extends Controller
            }elseif($users_role == '2'){
                return view('admin.index');
            }
-
        }catch(\Illuminate\Database\QueryException $qry_ex){//capturar excepciones de consultas en BD
            return redirect('/');
        }catch(Throwable $th){//Capturar errores en General.
            return redirect('/');
        }
-
        return view('admin.quotations.index',compact('quotations'));
    }
 
@@ -73,7 +68,6 @@ class QuotationController extends Controller
     public function createquotationclient($id_client)
     {
         $client = null;
-
         if(isset($id_client)){
             $client = Client::on(Auth::user()->database_name)->find($id_client);
         }
@@ -87,7 +81,6 @@ class QuotationController extends Controller
             $datenow = $date->format('Y-m-d');
 
             return view('admin.quotations.createquotation',compact('client','datenow','transports','drivers'));
-
         }else{
             return redirect('/quotations')->withDanger('El Cliente no existe');
         }
@@ -96,38 +89,29 @@ class QuotationController extends Controller
     public function createquotationvendor($id_client,$id_vendor)
     {
         $client = null;
-
         if(isset($id_client)){
             $client = Client::on(Auth::user()->database_name)->find($id_client);
         }
         if(isset($client)){
 
             $vendor = null;
-
             if(isset($id_vendor)){
                 $vendor = Vendor::on(Auth::user()->database_name)->find($id_vendor);
             }
             if(isset($vendor)){
-
                 /* $vendors     = Vendor::on(Auth::user()->database_name)->get();*/
-
                 $transports     = Transport::on(Auth::user()->database_name)->get();
                 $drivers        = Driver::all();
                 $date = Carbon::now();
                 $datenow = $date->format('Y-m-d');
-
                 return view('admin.quotations.createquotation',compact('client','vendor','datenow','transports','drivers'));
-
             }else{
                 return redirect('/quotations')->withDanger('El Vendedor no existe');
             }
-
         }else{
             return redirect('/quotations')->withDanger('El Cliente no existe');
         }
     }
-
-
 
     public function create($id_quotation,$coin)
     {

@@ -117,13 +117,10 @@ class PDFController extends Controller
             $iva                   = 16;
             $rate                  = $quotation->bcv;
 
-
             foreach($inventories_quotationss as $vars){
-
                 //Se calcula restandole el porcentaje de descuento (discount)
                 $percentage = (($vars->price * $vars->amount_quotation) * $vars->discount)/100;
                 $total += ($vars->price * $vars->amount_quotation) - $percentage;
-
 
                 if( $vars->retiene_iva_quotation == 1 ){
                     $total_retiene         = 0;
@@ -131,9 +128,7 @@ class PDFController extends Controller
                     $total_iva_pcb         = 0;
                     $total_iva             = 0;
                     $total_venta        += $vars->price * $vars->amount_quotation ;
-
                 }else{
-
                     $total_retiene         +=  ($vars->price * $vars->amount_quotation) - $percentage;
                     $base_imponible        += $total_retiene;
                     $total_iva             =  $total_retiene * ($iva / 100) ;
@@ -141,7 +136,6 @@ class PDFController extends Controller
                     $total_iva_pcb         =  $total_base_impo_pcb * ($iva /100);
                     $total_venta           =    $total_retiene + $total_iva + $total_iva_pcb;
                 }
-
             }
 
 
@@ -151,14 +145,11 @@ class PDFController extends Controller
                 $newVenc ="";
             }
 
-
-
-                if($coin == 'bolivares'){
-                    $bcv = null;
-
-                }else{
-                    $bcv = $quotation->bcv;
-                }
+            if($coin == 'bolivares'){
+                $bcv = null;
+            }else{
+                $bcv = $quotation->bcv;
+            }
 
                 $company = Company::on(Auth::user()->database_name)->find(1);
 
@@ -364,7 +355,7 @@ class PDFController extends Controller
             $retiene_islr          = 0;
             $variable_total        = 0;
             $base_imponible_pcb    = 15;
-            $iva                   = 12;
+            $iva                   = 16;
             $rate                  = $quotation->bcv;
 
 

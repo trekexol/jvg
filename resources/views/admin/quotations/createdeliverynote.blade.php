@@ -195,57 +195,31 @@
     $("#iva").on('change',function()
     {
                 //calculate();
-
                 let inputIva = document.getElementById("iva").value;
-
                 //let totalIva = (inputIva * "<?php echo $quotation->total_factura; ?>") / 100;
-
                 let totalFactura = "<?php echo $quotation->total_factura  / ($bcv ?? 1)?>";
-
                 //AQUI VAMOS A SACAR EL MONTO DEL IVA DE LOS QUE ESTAN EXENTOS, PARA LUEGO RESTARSELO AL IVA TOTAL
                 let totalBaseImponible = "<?php echo $quotation->base_imponible  / ($bcv ?? 1)?>";
-
                 let totalIvaMenos = (inputIva * "<?php echo $quotation->base_imponible  / ($bcv ?? 1); ?>") / 100;
-
                 let iva_percibido = "<?php echo $total_iva_pcb / ($bcv ?? 1) ; ?>";
-
-
                 /*-----------------------------------*/
                 /*Toma la Base y la envia por form*/
                 let sub_total_form = document.getElementById("total_factura").value;
-
                 var montoFormat = sub_total_form.replace(/[$.]/g,'');
-
                 var montoFormat_sub_total_form = montoFormat.replace(/[,]/g,'.');
-
                 //document.getElementById("sub_total_form").value =  montoFormat_sub_total_form;
                 /*-----------------------------------*/
-
-
                 var total_iva_exento =  parseFloat(totalIvaMenos);
-
                 var iva_format = total_iva_exento.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
-
                 //document.getElementById("retencion").value = parseFloat(totalIvaMenos);
                 //------------------------------
-
-
-
                 document.getElementById("iva_amount").value = iva_format;
-
-
                 // var grand_total = parseFloat(totalFactura) + parseFloat(totalIva);
                 var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento) + parseFloat(iva_percibido) ;
-
                 var grand_totalformat = grand_total.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
-
                 document.getElementById("sub_total").value = grand_totalformat;
-
-
                 var total = grand_total;
-
                 document.getElementById("grand_total").value = total.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
-
     });
 </script>
 <script type="text/javascript">

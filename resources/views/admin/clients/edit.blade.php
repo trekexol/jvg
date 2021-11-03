@@ -24,7 +24,6 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header h4">Editar Cliente</div>
-
                 <div class="card-body">
                     <form  method="POST"   action="{{ route('clients.update',$var->id) }}" enctype="multipart/form-data" >
                         @method('PATCH')
@@ -33,12 +32,12 @@
                             <form method="POST" action="{{ route('clients.store') }}" enctype="multipart/form-data">
                                 @csrf
                                 <input id="id_user" type="hidden" class="form-control @error('id_user') is-invalid @enderror" name="id_user" value="{{ Auth::user()->id }}" required autocomplete="id_user">
-
                                 <div class="form-group row">
                                     <label for="type_code" class="col-md-2 col-form-label text-md-right">Código, Cédula / Rif:</label>
-
                                     <div class="col-md-1">
                                         <select class="form-control" name="type_code" id="type_code">
+                                            <option value="{{ $var->type_code }}">{{ $var->type_code }}</option>
+                                            <option >-------------------------</option>
                                             <option value="J-">J-</option>
                                             <option value="G-">G-</option>
                                             <option value="V-">V-</option>
@@ -46,28 +45,29 @@
                                         </select>
                                     </div>
                                     <div class="col-md-3">
-                                        <input id="cedula_rif" type="text" class="form-control @error('cedula_rif') is-invalid @enderror" name="cedula_rif" value="{{ old('cedula_rif') }}" required autocomplete="cedula_rif">
-
+                                        <input id="cedula_rif" type="text" class="form-control @error('cedula_rif') is-invalid @enderror" name="cedula_rif" value="{{ $var->cedula_rif }}" required autocomplete="cedula_rif">
                                         @error('cedula_rif')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
                                     </div>
-
                                     <label for="vendor" class="col-md-2 col-form-label text-md-right">Vendedor:</label>
-
                                     <div class="col-md-3">
                                         <select class="form-control" id="id_vendor" name="id_vendor">
-                                            <option value="">Seleccione un Vendedor</option>
+                                            @if(empty( $var->vendors['id'] ))
+                                                <option value="">Sin Vendedor</option>
+                                                <option value="">--------------</option>
+                                            @else
+                                                <option value="{{ $var->vendors['id'] }}">{{ $var->vendors['name'] }}</option>
+                                                <option value="">--------------</option>
+                                            @endif
                                             @foreach($vendors as $vendor)
                                                 <option value="{{ $vendor->id }}">{{ $vendor->name }}</option>
                                             @endforeach
-
                                         </select>
                                     </div>
                                 </div>
-
                         <div class="form-group row">
                             <div class="col-sm-2">
                                 <label for="name">Nombre:</label>
@@ -84,7 +84,7 @@
                                 <label for="licencia">Licencia:</label>
                             </div>
                             <div class="col-sm-4">
-                                <input id="licencia" type="text" class="form-control @error('licencia') is-invalid @enderror" name="Licencia" value="{{ old('Licencia') }}" placeholder =" Licencia de Licores" required autocomplete="licencia" autofocus>
+                                <input id="licencia" type="text" class="form-control @error('licencia') is-invalid @enderror" name="Licencia" value="{{ $var->licence }}" placeholder =" Licencia de Licores" required autocomplete="licencia" autofocus>
                                 @error('licencia')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -184,10 +184,8 @@
                                 @enderror
                             </div>
                             <label for="phone2" class="col-md-2 col-form-label text-md-right">Teléfono 2</label>
-
                             <div class="col-md-4">
                                 <input id="phone2" type="text" class="form-control @error('phone2') is-invalid @enderror" name="phone2" value="{{ $var->phone2 }}" required autocomplete="phone2">
-
                                 @error('phone2')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -195,10 +193,8 @@
                                 @enderror
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <label for="email" class="col-md-2 col-form-label text-md-right">Tiene Crédito</label>
-
                             <div class="form-check">
                                 @if (isset($var->days_credit))
                                     <input class="form-check-input position-static" type="checkbox" id="has_credit" checked name="has_credit" onclick="calc();" value="option1" aria-label="...">
@@ -206,9 +202,7 @@
                                     <input class="form-check-input position-static" type="checkbox" id="has_credit" name="has_credit" onclick="calc();" value="option1" aria-label="...">
                                 @endif
                                </div>
-
                               <label id="days_credit_label" for="days_credit_label" class="col-md-2 col-form-label text-md-right">Dias de Crédito</label>
-
                               <div class="col-md-2">
                                   <input id="days_credit" type="text" class="form-control @error('days_credit') is-invalid @enderror" name="days_credit" value="{{ $var->days_credit }}"  autocomplete="days_credit">
 

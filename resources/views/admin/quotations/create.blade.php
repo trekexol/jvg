@@ -471,7 +471,7 @@
                         });
                     }
                     //console.clear();
-                      console.log(htmlOptions);
+                     // console.log(htmlOptions);
                     precio_list.html('');
                     precio_list.html(htmlOptions);
                 },
@@ -484,16 +484,15 @@
         $("#precio_list").on('change',function(){
             var coin        = document.getElementById("coin").value;
             if(coin == 'dolares'){
-                var precio_list = document.getElementById("precio_list").value;
+                var precio_list     = document.getElementById("precio_list").value;
                 var precio_str    = precio_list.replaceAll(".", ",");
-                alert(precio_str);
                 document.getElementsByName("cost")[0].value = precio_str;
             }else{
                 var rate        = document.getElementById("rate").value;
                 var rate_str    = rate.replaceAll(".", "");
                 var rate_str2    = rate_str.replaceAll(",", ".");
                 var precio_list = document.getElementById("precio_list").value;
-                var resultado   = (parseInt(precio_list) * parseInt(rate_str2));
+                var resultado   = (parseFloat(precio_list) * parseFloat(rate_str2)).toFixed(2);
                 var grand_totalformat = resultado.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
 
                 document.getElementsByName("cost")[0].value = new Intl.NumberFormat('es-MX').format(resultado);

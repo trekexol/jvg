@@ -1920,11 +1920,10 @@ class FacturarController extends Controller
          }
 
          if(isset($quotation)){
-                // $product_quotations = QuotationProduct::on(Auth::user()->database_name)->where('id_quotation',$quotation->id)->get();
-                $payment_quotations = QuotationPayment::on(Auth::user()->database_name)->where('id_quotation',$quotation->id)->get();
-
-             $date = Carbon::now();
-             $datenow = $date->format('Y-m-d');
+            // $product_quotations  = QuotationProduct::on(Auth::user()->database_name)->where('id_quotation',$quotation->id)->get();
+            $payment_quotations     = QuotationPayment::on(Auth::user()->database_name)->where('id_quotation',$quotation->id)->get();
+            $date                   = Carbon::now();
+            $datenow                = $date->format('Y-m-d');
 
              if(isset($coin)){
                 if($coin == 'bolivares'){
@@ -1936,10 +1935,62 @@ class FacturarController extends Controller
             }else{
                $bcv = null;
             }
+             $inventories_quotations = DB::connection(Auth::user()->database_name)->table('products')->join('inventories', 'products.id', '=', 'inventories.product_id')
+                 ->join('quotation_products', 'inventories.id', '=', 'quotation_products.id_inventory')
+                 ->where('quotation_products.id_quotation',$quotation->id)
+                 ->select('products.*','quotation_products.price as price','quotation_products.rate as rate','quotation_products.discount as discount',
+                     'quotation_products.amount as amount_quotation','quotation_products.retiene_iva as retiene_iva_quotation'
+                     ,'quotation_products.retiene_islr as retiene_islr_quotation')
+                 ->get();
 
-            $quotation->amount_with_iva = ($quotation->amount_with_iva / ($bcv ?? 1)) + ($quotation->iva_percibido / ($bcv ?? 1)) - ($quotation->anticipo / ($bcv ?? 1)) - ($quotation->retencion_iva / ($bcv ?? 1)) - ($quotation->retencion_islr / ($bcv ?? 1));
+             $total= 0;
+             $base_imponible= 0;
+             $price_cost_total= 0;
 
-             return view('admin.quotations.createfacturado',compact('quotation','payment_quotations', 'datenow','bcv','coin','reverso'));
+             $retiene_iva = 0;
+
+             $total_retiene_islr = 0;
+             $retiene_islr = 0;
+
+             $total_mercancia= 0;
+             $total_servicios= 0;
+
+             $total_iva_pcb = 0;
+
+
+             $base_imponible_pcb = 15;
+             $iva = 16;
+             $rate = $quotation->bcv;
+
+
+             foreach($inventories_quotations as $var) {
+                 //Se calcula restandole el porcentaje de descuento (discount)
+                 $percentage = (($var->price * $var->amount_quotation) * $var->discount) / 100;
+
+                 $total += ($var->price * $var->amount_quotation) - $percentage;
+                 //-----------------------------
+
+                 if ($var->retiene_iva_quotation == 0) {
+
+                     $base_imponible += ($var->price * $var->amount_quotation) - $percentage;
+
+                     $total_base_impo_pcb = $base_imponible * ($base_imponible_pcb / 100);
+                     $total_iva_pcb = $total_base_impo_pcb * $iva / 100;
+
+                 } else {
+                     $retiene_iva += ($var->price * $var->amount_quotation) - $percentage;
+                 }
+
+                 if ($var->retiene_islr_quotation == 1) {
+
+                     $retiene_islr += ($var->price * $var->amount_quotation) - $percentage;
+
+                 }
+             }
+
+            $quotation->amount_with_iva = $total_iva_pcb  ;
+
+             return view('admin.quotations.createfacturado',compact('quotation','payment_quotations', 'datenow','bcv','coin','reverso','total_iva_pcb'));
             }else{
              return redirect('/invoices')->withDanger('La factura no existe');
          }

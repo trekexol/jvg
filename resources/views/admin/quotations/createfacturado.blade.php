@@ -87,7 +87,7 @@
                             <label for="observation" class="col-md-2 col-form-label text-md-right">Retencion IVA:</label>
 
                             <div class="col-md-3">
-                                <input id="observation" type="text" class="form-control @error('observation') is-invalid @enderror" name="observation" value="{{ number_format($quotation->retencion_iva / ($bcv ?? 1), 2, ',', '.') ?? 0 }}" readonly required autocomplete="observation">
+                                <input id="observation" type="text" class="form-control @error('observation') is-invalid @enderror" name="iva_percibido" value="{{ number_format($total_iva_pcb / ($bcv ?? 1), 2, ',', '.') ?? 0 }}" readonly required autocomplete="observation">
 
                                 @error('observation')
                                     <span class="invalid-feedback" role="alert">
@@ -142,7 +142,7 @@
                         <div class="form-group row">
                             <label for="total_pays" class="col-md-2 col-form-label text-md-right">Total a Pagar:</label>
                             <div class="col-md-4">
-                                <input id="total_pay" type="text" class="form-control @error('total_pay') is-invalid @enderror" name="total_pay" readonly value="{{ number_format(($quotation->amount_with_iva), 2, ',', '.') ?? '0,00' }}"  required autocomplete="total_pay">
+                                <input id="total_pay" type="text" class="form-control @error('total_pay') is-invalid @enderror" name="total_pay" readonly value="{{ number_format(($quotation->amount + $quotation->amount_iva) / ($bcv ?? 1) +($total_iva_pcb / ($bcv ?? 1))  , 2, ',', '.')}}"  required autocomplete="total_pay">
 
                                 @error('total_pay')
                                     <span class="invalid-feedback" role="alert">
@@ -235,6 +235,7 @@
 
             function calculate() {
                 let inputIva = document.getElementById("iva").value;
+                let inputIvaPcb = document.getElementById("iva_percibido").value;
                 //let totalIva = (inputIva * "<?php echo $quotation->total_factura; ?>") / 100;
                 let totalFactura = "<?php echo $quotation->total_factura / ($bcv ?? 1) ?>";
                 //AQUI VAMOS A SACAR EL MONTO DEL IVA DE LOS QUE ESTAN EXENTOS, PARA LUEGO RESTARSELO AL IVA TOTAL
@@ -246,7 +247,7 @@
                 //------------------------------
                 document.getElementById("iva_amounts").value = iva_format;
                 // var grand_total = parseFloat(totalFactura) + parseFloat(totalIva);
-                var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento);
+                var grand_total = parseFloat(totalFactura) + parseFloat(total_iva_exento)+ parseFloat(inputIvaPcb) ;
                 var grand_totalformat = grand_total.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
 
                 document.getElementById("grand_total").value = grand_totalformat;
@@ -254,7 +255,7 @@
                 let inputAnticipo = document.getElementById("anticipo").value;
                 var montoFormat = inputAnticipo.replace(/[$.]/g,'');
                 var montoFormat_anticipo = montoFormat.replace(/[,]/g,'.');
-                var total_pay = parseFloat(totalFactura) + total_iva_exento - montoFormat_anticipo;
+                var total_pay = parseFloat(totalFactura) + total_iva_exento - montoFormat_anticipo ;
                 var total_payformat = total_pay.toLocaleString('de-DE', {minimumFractionDigits: 2,maximumFractionDigits: 2});
 
                 document.getElementById("total_pay").value =  total_payformat;

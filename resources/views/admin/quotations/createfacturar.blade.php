@@ -936,7 +936,7 @@
                 let totalIvaMenos = (inputIva * "<?php echo $quotation->base_imponible  / ($bcv ?? 1) ; ?>") / 100;
 
                 let iva_percibido = "<?php echo $total_iva_pcb / ($bcv ?? 1) ; ?>";
-                alert(iva_percibido);
+
 
                 /*Toma la Base y la envia por form*/
                 let base_imponible_form = document.getElementById("base_imponible").value;
