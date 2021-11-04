@@ -17,45 +17,45 @@ class DeliveryNoteController extends Controller
     {
         $user       =   auth()->user();
         $users_role =   $user->role_id;
-        
+
          $quotations = Quotation::on(Auth::user()->database_name)->orderBy('number_delivery_note' ,'DESC')
                                  ->where('date_delivery_note','<>',null)
                                  ->where('date_billing',null)
                                  ->whereIn('status',[1,'M'])
                                  ->get();
-       
- 
+
+
         return view('admin.quotations.indexdeliverynote',compact('quotations'));
     }
- 
+
 
 
 
 
     public function createdeliverynote($id_quotation,$coin)
     {
-        
+
          $quotation = null;
-             
+
          if(isset($id_quotation)){
             $quotation = Quotation::on(Auth::user()->database_name)->findOrFail($id_quotation);
-            
+
             $quotation->coin = $coin;
-            
+
             $quotation->save();
          }
- 
+
          if(isset($quotation)){
-            
+
             $inventories_quotations = DB::connection(Auth::user()->database_name)->table('products')->join('inventories', 'products.id', '=', 'inventories.product_id')
                                                             ->join('quotation_products', 'inventories.id', '=', 'quotation_products.id_inventory')
                                                             ->where('quotation_products.id_quotation',$quotation->id)
                                                             ->select('products.*','quotation_products.price as price','quotation_products.rate as rate','quotation_products.discount as discount',
                                                             'quotation_products.amount as amount_quotation','quotation_products.retiene_iva as retiene_iva_quotation'
                                                             ,'quotation_products.retiene_islr as retiene_islr_quotation')
-                                                            ->get(); 
+                                                            ->get();
 
-            
+
             $total= 0;
             $base_imponible= 0;
 
@@ -66,26 +66,40 @@ class DeliveryNoteController extends Controller
             $total_retiene_islr = 0;
             $retiene_islr = 0;
 
+
+             $total_mercancia= 0;
+             $total_servicios= 0;
+
+             $total_iva_pcb = 0;
+
+             $base_imponible_pcb = 15;
+             $iva = 16;
+             $rate = $quotation->bcv;
+
             foreach($inventories_quotations as $var){
                 //Se calcula restandole el porcentaje de descuento (discount)
-                    $percentage = (($var->price * $var->amount_quotation) * $var->discount)/100;
+                $percentage = (($var->price * $var->amount_quotation) * $var->discount)/100;
 
-                    $total += ($var->price * $var->amount_quotation) - $percentage;
-                //----------------------------- 
+                $total += ($var->price * $var->amount_quotation) - $percentage;
+                //-----------------------------
 
                 if($var->retiene_iva_quotation == 0){
 
-                    $base_imponible += ($var->price * $var->amount_quotation) - $percentage; 
+                    $base_imponible += ($var->price * $var->amount_quotation) - $percentage;
+
+                    $total_base_impo_pcb = $base_imponible * ($base_imponible_pcb / 100);
+                    $total_iva_pcb = $total_base_impo_pcb  * $iva / 100;
 
                 }else{
-                    $retiene_iva += ($var->price * $var->amount_quotation) - $percentage; 
+                    $retiene_iva += ($var->price * $var->amount_quotation) - $percentage;
                 }
 
                 if($var->retiene_islr_quotation == 1){
 
-                    $retiene_islr += ($var->price * $var->amount_quotation) - $percentage; 
+                    $retiene_islr += ($var->price * $var->amount_quotation) - $percentage;
 
                 }
+
 
             }
 
@@ -93,16 +107,16 @@ class DeliveryNoteController extends Controller
             $quotation->base_imponible = $base_imponible;
 
             $date = Carbon::now();
-            $datenow = $date->format('Y-m-d');    
+            $datenow = $date->format('Y-m-d');
 
 
             if($coin == 'bolivares'){
                 $bcv = null;
-                
+
             }else{
                 $bcv = $quotation->bcv;
             }
-            
+
             /*Aqui revisamos el porcentaje de retencion de iva que tiene el cliente, para aplicarlo a productos que retengan iva */
             $client = Client::on(Auth::user()->database_name)->find($quotation->id_client);
 
@@ -110,24 +124,25 @@ class DeliveryNoteController extends Controller
                 $total_retiene_iva = ($retiene_iva * $client->percentage_retencion_iva) /100;
             }
 
-           
+
             if($client->percentage_retencion_islr != 0){
                 $total_retiene_islr = ($retiene_islr * $client->percentage_retencion_islr) /100;
             }
 
             /*-------------- */
-             
-     
-             return view('admin.quotations.createdeliverynote',compact('coin','quotation','datenow','bcv','total_retiene_iva','total_retiene_islr'));
+
+
+             return view('admin.quotations.createdeliverynote',compact('coin','quotation','datenow','bcv','total_retiene_iva','total_retiene_islr'
+                 ,'total_iva_pcb','total_base_impo_pcb'));
          }else{
              return redirect('/quotations')->withDanger('La cotizacion no existe');
-         } 
-         
+         }
+
     }
 
     public function reversar_delivery_note($id_quotation)
-    { 
-        
+    {
+
         $quotation = Quotation::on(Auth::user()->database_name)->findOrFail($id_quotation);
 
         QuotationProduct::on(Auth::user()->database_name)
@@ -136,10 +151,10 @@ class DeliveryNoteController extends Controller
                         ->where('products.type','MERCANCIA')
                         ->where('id_quotation',$quotation->id)
                         ->update(['inventories.amount' => DB::raw('inventories.amount+quotation_products.amount') , 'quotation_products.status' => 'X']);
-    
+
         $quotation->status = 'X';
         $quotation->save();
-       
+
         return redirect('quotations/indexnotasdeentrega')->withSuccess('Reverso de Nota de Entrega Exitoso!');
 
     }

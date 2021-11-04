@@ -55,7 +55,7 @@
                                 <label for="price">Precio:</label>
                             </div>
                             <div class="col-sm-4">
-                                <input id="price" type="text" class="form-control @error('price') is-invalid @enderror" name="Precio" value="{{ $product->price }}"  autocomplete="price">
+                                <input id="price" type="text" class="form-control @error('price') is-invalid @enderror" name="Precio" value="{{ $product_detail->price }}"  autocomplete="price">
                                 @error('price')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>

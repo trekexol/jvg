@@ -86,15 +86,15 @@ return [
         ],
 
 
-        'arya' => [
+        'aryajvg' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('ARYA_HOST', '127.0.0.1'),
-            'port' => env('ARYA_PORT', '3306'),
-            'database' => env('ARYA_DATABASE', 'forge'),
-            'username' => env('ARYA_USERNAME', 'forge'),
-            'password' => env('ARYA_PASSWORD', ''),
-            'unix_socket' => env('ARYA_SOCKET', ''),
+            'host' => env('ARYAJVG_HOST', '127.0.0.1'),
+            'port' => env('ARYAJVG_PORT', '3306'),
+            'database' => env('ARYAJVG_DATABASE', 'forge'),
+            'username' => env('ARYAJVG_USERNAME', 'forge'),
+            'password' => env('ARYAJVG_PASSWORD', ''),
+            'unix_socket' => env('ARYAJVG_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
